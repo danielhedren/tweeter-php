@@ -4,11 +4,11 @@ require_once "../../src/database.php";
 
 class User
 {
-    public int $id;
-    public string $email;
-    public string $displayname;
-    public string $password;
-    public string $date;
+    public $id;
+    public $email;
+    public $displayname;
+    public $password;
+    public $date;
 
     public static function fetch($user_id) {
         $stmt = Database::get_pdo()->prepare("SELECT * FROM User WHERE id = :id");
