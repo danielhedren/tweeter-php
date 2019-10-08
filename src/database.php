@@ -3,7 +3,7 @@ require_once "../config/db_config.php";
 
 class Database
 {
-    static object $_pdo;
+    static $_pdo;
 
     static function get_pdo() {
         if (!isset($_pdo)) {
