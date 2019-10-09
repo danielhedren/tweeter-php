@@ -38,7 +38,7 @@ class User
 
         if (isset($this->id)) {
             $stmt = Database::get_pdo()->prepare("UPDATE User SET email = :email, displayname = :displayname, password = :password WHERE id = :id);");
-            $stmt->bindParam(":id", $id, PDO::PARAM_INT);
+            $stmt->bindParam(":id", $this->id, PDO::PARAM_INT);
         } else {
             $stmt = Database::get_pdo()->prepare("INSERT INTO User (email, displayname, password) VALUES (:email, :displayname, :password);");
         }
@@ -57,6 +57,10 @@ class User
         return true;
     }
 
+    public function get_id() {
+        return $this->id;
+    }
+
     public function verify($password)
     {
         return password_verify($password, $this->password);
@@ -64,5 +68,17 @@ class User
 
     public function validate_email() {
         return filter_var($this->email, FILTER_VALIDATE_EMAIL);
+    }
+
+    public function fetch_comments($num, $page) {
+        $stmt = Database::get_pdo()->prepare("SELECT * FROM Comment WHERE user_id = :id LIMIT :limit, :offset");
+        $stmt->bindParam(":id", $this->id);
+        $stmt->bindParam(":limit", $num);
+        $stmt->bindValue(":offset", $page * $num);
+        $stmt->execute();
+
+        $result = $stmt->fetchAll(PDO::FETCH_CLASS, "Comment");
+
+        return $result;
     }
 }
