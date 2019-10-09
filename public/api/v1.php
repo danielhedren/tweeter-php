@@ -58,5 +58,11 @@ if ($json->function == "fetch_user") {
     $comment->user_id = $json->user_id;
     if (property_exists($json, "parent_id")) $comment->parent_id = $json->parent_id;
     $comment->content = $json->content;
-    $comment->save();
+
+    try {
+        $comment->save();
+        echo json_encode(["status" => true]);
+    } catch (Exception $e) {
+        echo json_encode(["status" => true, "message" => $e->getMessage()]);
+    }
 }
