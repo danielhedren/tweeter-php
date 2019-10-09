@@ -2,6 +2,7 @@
 
 require_once $_SERVER['DOCUMENT_ROOT']."/../src/database.php";
 require_once $_SERVER['DOCUMENT_ROOT']."../../src/DAO/User.php";
+require_once $_SERVER['DOCUMENT_ROOT']."../../src/DAO/Comment.php";
 
 session_start();
 
