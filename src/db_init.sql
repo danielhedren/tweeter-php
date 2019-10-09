@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS Comment (
                          user_id INT NOT NULL,
                          parent_id INT,
                          content VARCHAR(255),
+                         date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                          CONSTRAINT PK_Comment PRIMARY KEY (id),
                          CONSTRAINT FK_Comment_User FOREIGN KEY (user_id) REFERENCES User (id),
                          CONSTRAINT FK_Comment_Parent FOREIGN KEY (parent_id) REFERENCES Comment (id)
