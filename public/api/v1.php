@@ -65,4 +65,7 @@ if ($json->function == "fetch_user") {
     } catch (Exception $e) {
         echo json_encode(["status" => true, "message" => $e->getMessage()]);
     }
+} else if ($json->function == "fetch_comments") {
+    $comments = Comment::fetch_chronological(10, 0);
+    echo json_encode($comments);
 }

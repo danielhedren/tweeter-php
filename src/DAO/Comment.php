@@ -33,4 +33,15 @@ class Comment
         // TODO: Handle unique constraint exceptions
         $stmt->execute();
     }
+
+    public static function fetch_chronological($num, $page) {
+        $stmt = Database::get_pdo()->prepare("SELECT * FROM Comment ORDER BY date LIMIT :limit, :offset");
+        $stmt->bindParam(":limit", $num);
+        $stmt->bindValue(":offset", $page * $num);
+        $stmt->execute();
+
+        $result = $stmt->fetchAll(PDO::FETCH_CLASS, "Comment");
+
+        return $result;
+    }
 }
