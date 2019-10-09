@@ -10,7 +10,18 @@ if ($json->function == "fetch_user") {
         echo json_encode(User::fetch($json->user_id));
     }
 } else if ($json->function == "create_user") {
-    $email = filter_var($json->emaiL, FILTER_VALIDATE_EMAIL);
+    $email = filter_var($json->email, FILTER_VALIDATE_EMAIL);
+    $displayname = $json->displayname;
+    $password = $json->password;
+
+    if ($email && $displayname && $password) {
+        $new_user = new User();
+        $new_user->email = $email;
+        $new_user->displayname = $displayname;
+        $new_user->set_password($password);
+        $new_user->save();
+    }
+
 } else if ($json->function == "verify_user") {
     $email = filter_var($json->email, FILTER_VALIDATE_EMAIL);
     $password = $json->password;
