@@ -1,6 +1,6 @@
 <?php
 
-require_once "../src/database.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/../src/database.php";
 
 class User
 {

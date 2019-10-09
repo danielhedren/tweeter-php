@@ -1,7 +1,7 @@
 <?php
 
-require_once "../src/database.php";
-require_once "../src/DAO/User.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/../src/database.php";
+require_once $_SERVER['DOCUMENT_ROOT']."../../src/DAO/User.php";
 
 $json = json_decode($_POST["data"]);
 
