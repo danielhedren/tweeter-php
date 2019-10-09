@@ -73,8 +73,8 @@ class User
     public function fetch_comments($num, $page) {
         $stmt = Database::get_pdo()->prepare("SELECT * FROM Comment WHERE user_id = :id ORDER BY date DESC LIMIT :limit OFFSET :offset");
         $stmt->bindParam(":id", $this->id);
-        $stmt->bindParam(":limit", $num);
-        $stmt->bindValue(":offset", $page * $num);
+        $stmt->bindParam(":limit", $num, PDO::PARAM_INT);
+        $stmt->bindValue(":offset", $page * $num, PDO::PARAM_INT);
         $stmt->execute();
 
         $result = $stmt->fetchAll(PDO::FETCH_CLASS, "Comment");

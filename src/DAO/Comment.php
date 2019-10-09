@@ -26,8 +26,8 @@ class Comment
         } else {
             $stmt = Database::get_pdo()->prepare("INSERT INTO Comment (user_id, parent_id, content) VALUES (:user_id, :parent_id, :content);");
         }
-        $stmt->bindParam(":user_id", $this->user_id, PDO::PARAM_STR);
-        $stmt->bindParam(":parent_id", $this->parent_id, PDO::PARAM_STR);
+        $stmt->bindParam(":user_id", $this->user_id, PDO::PARAM_INT);
+        $stmt->bindParam(":parent_id", $this->parent_id, PDO::PARAM_INT);
         $stmt->bindParam(":content", $this->content, PDO::PARAM_STR);
 
         // TODO: Handle unique constraint exceptions
@@ -36,8 +36,8 @@ class Comment
 
     public static function fetch_chronological($num, $page) {
         $stmt = Database::get_pdo()->prepare("SELECT * FROM Comment ORDER BY date DESC LIMIT :limit OFFSET :offset");
-        $stmt->bindParam(":limit", $num);
-        $stmt->bindValue(":offset", $page * $num);
+        $stmt->bindParam(":limit", $num, PDO::PARAM_INT);
+        $stmt->bindValue(":offset", $page * $num, PDO::PARAM_INT);
         $stmt->execute();
 
         $result = $stmt->fetchAll(PDO::FETCH_CLASS, "Comment");
