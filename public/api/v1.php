@@ -3,6 +3,8 @@
 require_once $_SERVER['DOCUMENT_ROOT']."/../src/database.php";
 require_once $_SERVER['DOCUMENT_ROOT']."../../src/DAO/User.php";
 
+session_start();
+
 $json = json_decode(file_get_contents("php://input"));
 
 if ($json->function == "fetch_user") {
@@ -25,15 +27,15 @@ if ($json->function == "fetch_user") {
         try {
             $new_user->save();
         } catch (Exception $e) {
+            //TODO: User friendly error messages
             echo json_encode(["status" => false, "message" => $e->getMessage()]);
             return;
         }
 
         echo json_encode(["status" => true]);
+    } else {
+        echo json_encode(["status" => false]);
     }
-
-    echo json_encode(["status" => false]);
-
 } else if ($json->function == "verify_user") {
     $email = filter_var($json->email, FILTER_VALIDATE_EMAIL);
     $password = $json->password;
@@ -42,6 +44,8 @@ if ($json->function == "fetch_user") {
         $user = User::fetch_by_email($email);
         if ($user && $user->verify($password)) {
             echo json_encode(["status" => true]);
+
+            $_SESSION["userid"] = $user->get_id();
         } else {
             echo json_encode(["status" => false]);
         }
