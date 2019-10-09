@@ -56,7 +56,7 @@ if ($json->function == "fetch_user") {
 } else if ($json->function == "create_comment") {
     $comment = new Comment();
     $comment->user_id = $json->user_id;
-    if (property_exists($json->parent_id)) $comment->parent_id = $json->parent_id;
+    if (property_exists($json, "parent_id")) $comment->parent_id = $json->parent_id;
     $comment->content = $json->content;
     $comment->save();
 }
