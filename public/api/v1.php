@@ -18,9 +18,21 @@ if ($json->function == "fetch_user") {
         $new_user = new User();
         $new_user->email = $email;
         $new_user->displayname = $displayname;
-        $new_user->set_password($password);
-        $new_user->save();
+        if (!$new_user->set_password($password)) {
+            echo json_encode(["status" => false, "message" => "bad password"]);
+            return;
+        }
+        try {
+            $new_user->save();
+        } catch (Exception $e) {
+            echo json_encode(["status" => false, "message" => $e->getMessage()]);
+            return;
+        }
+
+        echo json_encode(["status" => true]);
     }
+
+    echo json_encode(["status" => false]);
 
 } else if ($json->function == "verify_user") {
     $email = filter_var($json->email, FILTER_VALIDATE_EMAIL);
