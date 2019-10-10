@@ -1,10 +1,13 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT']."../../src/DAO/Comment.php";
-require_once $_SERVER['DOCUMENT_ROOT']."../../src/DAO/User.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "../../src/DAO/Comment.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "../../src/DAO/User.php";
+
+session_start();
 ?>
 
 <!doctype html>
 <html lang="en">
+
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -15,8 +18,10 @@ require_once $_SERVER['DOCUMENT_ROOT']."../../src/DAO/User.php";
 
     <title>Tweeter</title>
 </head>
+
 <body>
 
+<!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="#">Tweeter</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -26,29 +31,114 @@ require_once $_SERVER['DOCUMENT_ROOT']."../../src/DAO/User.php";
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
         </ul>
-        <?php
-        if (!isset($_SESSION["userid"])) {
-            ?>
-            <form id="loginForm" class="form-inline my-2 my-lg-0">
-                <input id="loginEmail" class="form-control mr-sm-2" type="email" placeholder="Email" aria-label="Email">
-                <input id="loginPassword" class="form-control mr-sm-2" type="password" placeholder="Password" aria-label="Password">
-                <button id="loginButton" class="btn btn-outline-success my-2 my-sm-0" type="submit">Login</button>
-            </form>';
-            <?php
-        }
-        ?>
+        <span id="navLoggedOut" <?php if (isset($_SESSION["userid"])) { echo 'style="display:none";'; }?>>
+                <button type="button" class="btn btn-primary mr-1" data-toggle="modal" data-target="#loginModal">
+                    Log in
+                </button>
+                <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#registerModal">
+                    Register
+                </button>
+            </span>
+        <span id="navLoggedIn" <?php if (!isset($_SESSION["userid"])) { echo 'style="display:none";'; }?>>
+                <button type="button" class="btn btn-primary mr-1" data-toggle="modal" data-target="#commentModal">
+                    New comment
+                </button>
+                <button type="button" class="btn btn-danger mr-1" data-toggle="modal" id="logoutButton">
+                    Log out
+                </button>
+            </span>
     </div>
 </nav>
 
+<!-- Login modal -->
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="loginModalLabel">Login</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="loginForm" class="form my-2 my-lg-0">
+                    <input required autocomplete="tweeter_email" id="loginEmail" class="form-control mr-sm-2" type="email" placeholder="Email" aria-label="Email">
+                    <input required minlength="8" autocomplete="tweeter_password" id="loginPassword" class="form-control mt-2 mr-sm-2" type="password" placeholder="Password" aria-label="Password">
+                </form>
+                <div class="alert alert-info mt-2" style="display:none" role="alert">
+                    Log in failed
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="loginButton" type="button" class="btn btn-primary">Login</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Register modal -->
+<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="registerModalLabel">Register</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="registerForm" class="form my-2 my-lg-0">
+                    <input required id="registerEmail" class="form-control mr-sm-2" type="email" placeholder="Email" aria-label="Email">
+                    <input required id="registerDisplayname" class="form-control mt-2 mr-sm-2" type="text" placeholder="Display name" aria-label="Display name">
+                    <input required minlength="8" id="registerPassword1" class="form-control mt-2 mr-sm-2" type="password" placeholder="Password" aria-label="Password">
+                    <input required minlength="8" id="registerPassword2" class="form-control mt-2 mr-sm-2" type="password" placeholder="Confirm password" aria-label="Password">
+                </form>
+                <div class="alert alert-info mt-2" style="display:none" role="alert">
+                    Registration failed
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="registerButton" type="button" class="btn btn-primary">Register</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Comment modal -->
+<div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="commentModalLabel">New comment</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="commentForm" class="form my-2 my-lg-0">
+                    <textarea maxlength="255" class="form-control" id="commentText" rows="10"></textarea>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="commentButton" type="button" class="btn btn-primary">Post</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Comments -->
 <div class="container">
     <?php
     $comments = Comment::fetch_chronological(10, 0);
 
     foreach ($comments as $c) {
         ?>
-        <div class="card">
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="card-title"><?php echo User::fetch($c->user_id)->displayname ?></h5>
+                <h6 class="card-subtitle mb-2 text-muted"><?php echo $c->date ?></h6>
+            </div>
             <div class="card-body">
-                <h5 class="card-title"><?php echo User::fetch_by_id($c->user_id)->displayname ?></h5>
                 <p class="card-text"><?php echo $c->content ?></p>
             </div>
         </div>
@@ -65,6 +155,120 @@ require_once $_SERVER['DOCUMENT_ROOT']."../../src/DAO/User.php";
 <script>
     "use strict;"
 
+    /*
+        Login
+    */
+    document.querySelector("#loginButton").onclick = () => {
+        if (!document.querySelector("#loginForm").reportValidity()) return;
+
+        var email = document.querySelector("#loginEmail").value;
+        var password = document.querySelector("#loginPassword").value;
+        var xmlHttp = new XMLHttpRequest();
+
+        xmlHttp.open("POST", "/api/v1.php", true); // true for asynchronous
+        xmlHttp.setRequestHeader("Content-Type", "application/json");
+        xmlHttp.send(JSON.stringify({
+            "function": "verify_user",
+            "email": email,
+            "password": password
+        }));
+        xmlHttp.onreadystatechange = () => {
+            if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+                var jsonResponse;
+                // Break if response is unparseable
+                try {
+                    jsonResponse = JSON.parse(xmlHttp.response);
+                } catch (e) {
+                    return;
+                }
+                if (jsonResponse["status"]) {
+                    document.querySelector("#loginModal > div > div > div.modal-header > button").click();
+                    document.querySelector("#loginModal .alert").style.display = "none";
+                    document.querySelector("#navLoggedOut").style.display = "none";
+                    document.querySelector("#navLoggedIn").style.display = "block";
+                } else {
+                    document.querySelector("#loginModal .alert").style.display = "block";
+                }
+            }
+        }
+    }
+
+    /*
+        Register
+    */
+    document.querySelector("#registerButton").onclick = () => {
+        if (!document.querySelector("#registerForm").reportValidity()) return;
+
+        var email = document.querySelector("#registerEmail").value;
+        var displayname = document.querySelector("#registerDisplayname").value;
+        var password = document.querySelector("#registerPassword1").value;
+        var password2 = document.querySelector("#registerPassword2").value;
+
+        if (password != password2) {
+
+            return;
+        }
+
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open("POST", "/api/v1.php", true); // true for asynchronous
+        xmlHttp.setRequestHeader("Content-Type", "application/json");
+        xmlHttp.send(JSON.stringify({
+            "function": "create_user",
+            "email": email,
+            "displayname": displayname,
+            "password": password
+        }));
+        xmlHttp.onreadystatechange = () => {
+            if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+                var jsonResponse;
+                // Break if response is unparseable
+                try {
+                    jsonResponse = JSON.parse(xmlHttp.response);
+                } catch (e) {
+                    return;
+                }
+                if (jsonResponse["status"]) {
+                    document.querySelector("#loginModal > div > div > div.modal-header > button").click();
+                    document.querySelector("#loginModal .alert").style.display = "none";
+                    document.querySelector("#navLoggedOut").style.display = "none";
+                    document.querySelector("#navLoggedIn").style.display = "block";
+                } else {
+                    document.querySelector("#registerModal .alert").style.display = "block";
+                }
+            }
+        }
+    }
+
+    /*
+        Logout
+    */
+    document.querySelector("#logoutButton").onclick = () => {
+        var email = document.querySelector("#loginEmail").value;
+        var password = document.querySelector("#loginPassword").value;
+        var xmlHttp = new XMLHttpRequest();
+
+        xmlHttp.open("POST", "/api/v1.php", true); // true for asynchronous
+        xmlHttp.setRequestHeader("Content-Type", "application/json");
+        xmlHttp.send(JSON.stringify({
+            "function": "logout_user"
+        }));
+        xmlHttp.onreadystatechange = () => {
+            if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+                var jsonResponse;
+                // Break if response is unparseable
+                try {
+                    jsonResponse = JSON.parse(xmlHttp.response);
+                } catch (e) {
+                    return;
+                }
+                if (jsonResponse["status"]) {
+                    document.querySelector("#navLoggedIn").style.display = "none";
+                    document.querySelector("#navLoggedOut").style.display = "block";
+                }
+            }
+        }
+    }
 </script>
 </body>
+
 </html>

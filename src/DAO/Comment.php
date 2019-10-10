@@ -20,7 +20,7 @@ class Comment
         return $comment;
     }
 
-    public function save(): void
+    public function save()
     {
         if (isset($this->id)) {
             $stmt = Database::get_pdo()->prepare("UPDATE Comment SET user_id = :user_id, parent_id = :parent_id, content = :content WHERE id = :id;");

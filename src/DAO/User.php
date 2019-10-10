@@ -32,7 +32,7 @@ class User
         return $user;
     }
 
-    public function save(): void
+    public function save()
     {
         if (!$this->validate_email()) return;
 
