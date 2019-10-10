@@ -56,6 +56,9 @@ if ($json->function == "fetch_user") {
 } else if ($json->function == "logout_user") {
     if (isset($_SESSION["userid"])) {
         unset($_SESSION["userid"]);
+        echo json_encode(["status" => true]);
+    } else {
+        echo json_encode(["status" => false]);
     }
 } else if ($json->function == "create_comment") {
     $comment = new Comment();
