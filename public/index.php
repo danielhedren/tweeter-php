@@ -156,22 +156,13 @@ session_start();
     "use strict;"
 
     /*
-        Login
+        Utility method for API calls
     */
-    document.querySelector("#loginButton").onclick = () => {
-        if (!document.querySelector("#loginForm").reportValidity()) return;
-
-        var email = document.querySelector("#loginEmail").value;
-        var password = document.querySelector("#loginPassword").value;
+    function postJson(data, callback) {
         var xmlHttp = new XMLHttpRequest();
-
         xmlHttp.open("POST", "/api/v1.php", true); // true for asynchronous
         xmlHttp.setRequestHeader("Content-Type", "application/json");
-        xmlHttp.send(JSON.stringify({
-            "function": "verify_user",
-            "email": email,
-            "password": password
-        }));
+        xmlHttp.send(JSON.stringify(data));
         xmlHttp.onreadystatechange = () => {
             if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
                 var jsonResponse;
@@ -181,16 +172,39 @@ session_start();
                 } catch (e) {
                     return;
                 }
-                if (jsonResponse["status"]) {
-                    document.querySelector("#loginModal > div > div > div.modal-header > button").click();
-                    document.querySelector("#loginModal .alert").style.display = "none";
-                    document.querySelector("#navLoggedOut").style.display = "none";
-                    document.querySelector("#navLoggedIn").style.display = "block";
-                } else {
-                    document.querySelector("#loginModal .alert").style.display = "block";
-                }
+
+                callback(jsonResponse);
             }
         }
+    }
+
+    /*
+        Login
+    */
+    function login(email, password) {
+        postJson({
+            "function": "verify_user",
+            "email": email,
+            "password": password
+        }, (response) => {
+            if (response["status"]) {
+                document.querySelector("#loginModal > div > div > div.modal-header > button").click();
+                document.querySelector("#loginModal .alert").style.display = "none";
+                document.querySelector("#navLoggedOut").style.display = "none";
+                document.querySelector("#navLoggedIn").style.display = "block";
+            } else {
+                document.querySelector("#loginModal .alert").style.display = "block";
+            }
+        });
+    }
+
+    document.querySelector("#loginButton").onclick = () => {
+        if (!document.querySelector("#loginForm").reportValidity()) return;
+
+        var email = document.querySelector("#loginEmail").value;
+        var password = document.querySelector("#loginPassword").value;
+
+        login(email, password);
     }
 
     /*
@@ -205,68 +219,40 @@ session_start();
         var password2 = document.querySelector("#registerPassword2").value;
 
         if (password != password2) {
-
             return;
         }
 
-        var xmlHttp = new XMLHttpRequest();
-        xmlHttp.open("POST", "/api/v1.php", true); // true for asynchronous
-        xmlHttp.setRequestHeader("Content-Type", "application/json");
-        xmlHttp.send(JSON.stringify({
+        postJson({
             "function": "create_user",
             "email": email,
             "displayname": displayname,
             "password": password
-        }));
-        xmlHttp.onreadystatechange = () => {
-            if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-                var jsonResponse;
-                // Break if response is unparseable
-                try {
-                    jsonResponse = JSON.parse(xmlHttp.response);
-                } catch (e) {
-                    return;
-                }
-                if (jsonResponse["status"]) {
-                    document.querySelector("#loginModal > div > div > div.modal-header > button").click();
-                    document.querySelector("#loginModal .alert").style.display = "none";
-                    document.querySelector("#navLoggedOut").style.display = "none";
-                    document.querySelector("#navLoggedIn").style.display = "block";
-                } else {
-                    document.querySelector("#registerModal .alert").style.display = "block";
-                }
+        }, (response) => {
+            if (response["status"]) {
+                document.querySelector("#registerModal > div > div > div.modal-header > button").click();
+                login(email, password);
+            } else {
+                document.querySelector("#registerModal .alert").style.display = "block";
             }
-        }
+        });
     }
 
     /*
         Logout
     */
-    document.querySelector("#logoutButton").onclick = () => {
-        var email = document.querySelector("#loginEmail").value;
-        var password = document.querySelector("#loginPassword").value;
-        var xmlHttp = new XMLHttpRequest();
-
-        xmlHttp.open("POST", "/api/v1.php", true); // true for asynchronous
-        xmlHttp.setRequestHeader("Content-Type", "application/json");
-        xmlHttp.send(JSON.stringify({
+    function logout() {
+        postJson({
             "function": "logout_user"
-        }));
-        xmlHttp.onreadystatechange = () => {
-            if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-                var jsonResponse;
-                // Break if response is unparseable
-                try {
-                    jsonResponse = JSON.parse(xmlHttp.response);
-                } catch (e) {
-                    return;
-                }
-                if (jsonResponse["status"]) {
-                    document.querySelector("#navLoggedIn").style.display = "none";
-                    document.querySelector("#navLoggedOut").style.display = "block";
-                }
+        }, (response) => {
+            if (response["status"]) {
+                document.querySelector("#navLoggedIn").style.display = "none";
+                document.querySelector("#navLoggedOut").style.display = "block";
             }
-        }
+        });
+    }
+
+    document.querySelector("#logoutButton").onclick = () => {
+        logout();
     }
 </script>
 </body>
