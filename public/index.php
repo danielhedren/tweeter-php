@@ -1,6 +1,5 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . "../../src/DAO/Comment.php";
-require_once $_SERVER['DOCUMENT_ROOT'] . "../../src/DAO/User.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "../../src/DAO/DisplayComment.php";
 
 session_start();
 ?>
@@ -31,7 +30,9 @@ session_start();
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
         </ul>
-        <span id="navLoggedOut" <?php if (isset($_SESSION["userid"])) { echo 'style="display:none";'; }?>>
+        <span id="navLoggedOut" <?php if (isset($_SESSION["userid"])) {
+            echo 'style="display:none";';
+        } ?>>
                 <button type="button" class="btn btn-primary mr-1" data-toggle="modal" data-target="#loginModal">
                     Log in
                 </button>
@@ -39,7 +40,9 @@ session_start();
                     Register
                 </button>
             </span>
-        <span id="navLoggedIn" <?php if (!isset($_SESSION["userid"])) { echo 'style="display:none";'; }?>>
+        <span id="navLoggedIn" <?php if (!isset($_SESSION["userid"])) {
+            echo 'style="display:none";';
+        } ?>>
                 <button type="button" class="btn btn-primary mr-1" data-toggle="modal" data-target="#commentModal">
                     New comment
                 </button>
@@ -118,6 +121,9 @@ session_start();
                 <form id="commentForm" class="form my-2 my-lg-0">
                     <textarea maxlength="255" class="form-control" id="commentText" rows="10"></textarea>
                 </form>
+                <div class="alert alert-info mt-2" style="display:none" role="alert">
+                    Post failed
+                </div>
             </div>
             <div class="modal-footer">
                 <button id="commentButton" type="button" class="btn btn-primary">Post</button>
@@ -127,19 +133,22 @@ session_start();
 </div>
 
 <!-- Comments -->
-<div id="commentsContainer" class="container">
+<div id="commentsContainer" class="container col-4">
     <?php
-    $comments = Comment::fetch_chronological(10, 0);
+    $comments = DisplayComment::fetch_chronological(10, 0);
 
     foreach ($comments as $c) {
         ?>
         <div class="card mt-3">
             <div class="card-header">
-                <h5 class="card-title"><?php echo User::fetch($c->user_id)->displayname ?></h5>
-                <h6 class="card-subtitle mb-2 text-muted"><?php echo $c->date ?></h6>
+                <h5 class="card-title"><?php echo $c->displayname ?></h5>
+                <h6 class="card-subtitle mb-2 text-muted"><?php echo "@".$c->user_id." | ".$c->date ?></h6>
             </div>
             <div class="card-body">
-                <p class="card-text"><?php echo htmlspecialchars($c->content) ?></p>
+                <p class="card-text"><?php echo $c->content ?></p>
+            </div>
+            <div class="card-footer">
+                <button type="button" class="btn btn-link btn-sm">Yeah!</button>
             </div>
         </div>
         <?php
@@ -153,150 +162,155 @@ session_start();
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 <script>
-    "use strict;"
+    (function() {
+        "use strict;"
 
-    /*
-        Utility method for API calls
-    */
-    function postJson(data, callback) {
-        var xmlHttp = new XMLHttpRequest();
-        xmlHttp.open("POST", "/api/v1.php", true); // true for asynchronous
-        xmlHttp.setRequestHeader("Content-Type", "application/json");
-        xmlHttp.send(JSON.stringify(data));
-        xmlHttp.onreadystatechange = () => {
-            if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-                var jsonResponse;
-                // Break if response is unparseable
-                try {
-                    jsonResponse = JSON.parse(xmlHttp.response);
-                } catch (e) {
-                    return;
+        /*
+            Utility method for API calls
+        */
+        function postJson(data, callback) {
+            let xmlHttp = new XMLHttpRequest();
+            xmlHttp.open("POST", "/api/v1.php", true); // true for asynchronous
+            xmlHttp.setRequestHeader("Content-Type", "application/json");
+            xmlHttp.send(JSON.stringify(data));
+            xmlHttp.onreadystatechange = () => {
+                if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+                    let jsonResponse;
+                    // Break if response is unparseable
+                    try {
+                        jsonResponse = JSON.parse(xmlHttp.response);
+                    } catch (e) {
+                        return;
+                    }
+
+                    callback(jsonResponse);
                 }
-
-                callback(jsonResponse);
             }
         }
-    }
 
-    /*
-        Login
-    */
-    function login(email, password) {
-        postJson({
-            "function": "verify_user",
-            "email": email,
-            "password": password
-        }, (response) => {
-            if (response["status"]) {
-                document.querySelector("#loginModal > div > div > div.modal-header > button").click();
+        /*
+            Login
+        */
+        function login(email, password) {
+            postJson({
+                "function": "verify_user",
+                "email": email,
+                "password": password
+            }, (response) => {
+                if (response["status"]) {
+                    document.querySelector("#loginModal > div > div > div.modal-header > button").click();
 
-                document.querySelector("#navLoggedOut").style.display = "none";
-                document.querySelector("#navLoggedIn").style.display = "block";
-            }
-            document.querySelector("#loginModal .alert").style.display = response["status"] ? "none" : "block";
-        });
-    }
-
-    document.querySelector("#loginButton").onclick = () => {
-        if (!document.querySelector("#loginForm").reportValidity()) return;
-
-        var email = document.querySelector("#loginEmail").value;
-        var password = document.querySelector("#loginPassword").value;
-
-        login(email, password);
-    }
-
-    /*
-        Register
-    */
-    document.querySelector("#registerButton").onclick = () => {
-        if (!document.querySelector("#registerForm").reportValidity()) return;
-
-        var email = document.querySelector("#registerEmail").value;
-        var displayname = document.querySelector("#registerDisplayname").value;
-        var password = document.querySelector("#registerPassword1").value;
-        var password2 = document.querySelector("#registerPassword2").value;
-
-        if (password != password2) {
-            return;
-        }
-
-        postJson({
-            "function": "create_user",
-            "email": email,
-            "displayname": displayname,
-            "password": password
-        }, (response) => {
-            if (response["status"]) {
-                document.querySelector("#registerModal > div > div > div.modal-header > button").click();
-                login(email, password);
-            }
-            document.querySelector("#registerModal .alert").style.display = response["status"] ? "none" : "block";
-        });
-    }
-
-    /*
-        Logout
-    */
-    function logout() {
-        postJson({
-            "function": "logout_user"
-        }, (response) => {
-            if (response["status"]) {
-                document.querySelector("#navLoggedIn").style.display = "none";
-                document.querySelector("#navLoggedOut").style.display = "block";
-            }
-        });
-    }
-
-    document.querySelector("#logoutButton").onclick = () => {
-        logout();
-    }
-
-    /*
-        Post comment
-    */
-    document.querySelector("#commentButton").onclick = () => {
-        var content = document.querySelector("#commentText").value;
-
-        postJson({
-            "function": "create_comment",
-            "content": content
-        }, (response) => {
-            if (response["status"]) {
-                document.querySelector("#commentModal > div > div > div.modal-header > button").click();
-                fetchComments();
-            }
-            document.querySelector("#commentModal .alert").style.display = response["status"] ? "none" : "block";
-        });
-    }
-
-    /*
-        Fetch comments
-    */
-    function fetchComments(num, page) {
-        postJson({
-            "function": "fetch_comments"
-        }, (response) => {
-            var container = document.getElementById("commentsContainer");
-            container.innerHTML = "";
-
-            response.forEach((comment) => {
-                container.innerHTML += getCommentCardHtml(comment);
+                    document.querySelector("#navLoggedOut").style.display = "none";
+                    document.querySelector("#navLoggedIn").style.display = "block";
+                }
+                document.querySelector("#loginModal .alert").style.display = response["status"] ? "none" : "block";
             });
-        });
-    }
+        }
 
-    function getCommentCardHtml(comment) {
-        var html = '<div class="card mt-3"><div class="card-header"><h5 class="card-title">';
-        html += comment["displayname"];
-        html += '</h5><h6 class="card-subtitle mb-2 text-muted">';
-        html += comment["date"];
-        html += '</h6></div><div class="card-body"><p class="card-text">';
-        html += comment["content"];
-        html += '</p></div></div>';
-        return html;
-    }
+        document.querySelector("#loginButton").onclick = () => {
+            if (!document.querySelector("#loginForm").reportValidity()) return;
+
+            let email = document.querySelector("#loginEmail").value;
+            let password = document.querySelector("#loginPassword").value;
+
+            login(email, password);
+        }
+
+        /*
+            Register
+        */
+        document.querySelector("#registerButton").onclick = () => {
+            if (!document.querySelector("#registerForm").reportValidity()) return;
+
+            let email = document.querySelector("#registerEmail").value;
+            let displayname = document.querySelector("#registerDisplayname").value;
+            let password = document.querySelector("#registerPassword1").value;
+            let password2 = document.querySelector("#registerPassword2").value;
+
+            if (password != password2) {
+                return;
+            }
+
+            postJson({
+                "function": "create_user",
+                "email": email,
+                "displayname": displayname,
+                "password": password
+            }, (response) => {
+                if (response["status"]) {
+                    document.querySelector("#registerModal > div > div > div.modal-header > button").click();
+                    login(email, password);
+                }
+                document.querySelector("#registerModal .alert").style.display = response["status"] ? "none" : "block";
+            });
+        }
+
+        /*
+            Logout
+        */
+        function logout() {
+            postJson({
+                "function": "logout_user"
+            }, (response) => {
+                if (response["status"]) {
+                    document.querySelector("#navLoggedIn").style.display = "none";
+                    document.querySelector("#navLoggedOut").style.display = "block";
+                }
+            });
+        }
+
+        document.querySelector("#logoutButton").onclick = () => {
+            logout();
+        }
+
+        /*
+            Post comment
+        */
+        document.querySelector("#commentButton").onclick = () => {
+            let content = document.querySelector("#commentText").value;
+
+            postJson({
+                "function": "create_comment",
+                "content": content
+            }, (response) => {
+                if (response["status"]) {
+                    document.querySelector("#commentModal > div > div > div.modal-header > button").click();
+                    fetchComments();
+                }
+                document.querySelector("#commentModal .alert").style.display = response["status"] ? "none" : "block";
+            });
+        }
+
+        /*
+            Fetch comments
+        */
+        function fetchComments(num, page) {
+            postJson({
+                "function": "fetch_comments"
+            }, (response) => {
+                let container = document.getElementById("commentsContainer");
+                container.innerHTML = "";
+
+                response.forEach((comment) => {
+                    container.innerHTML += getCommentCardHtml(comment);
+                });
+            });
+        }
+
+        /*
+            Format comment cards
+        */
+        function getCommentCardHtml(comment) {
+            let html = '<div class="card mt-3"><div class="card-header"><h5 class="card-title">';
+            html += comment["displayname"];
+            html += '</h5><h6 class="card-subtitle mb-2 text-muted">';
+            html += comment["date"];
+            html += '</h6></div><div class="card-body"><p class="card-text">';
+            html += comment["content"];
+            html += '</p></div></div>';
+            return html;
+        }
+    })();
 </script>
 </body>
 
