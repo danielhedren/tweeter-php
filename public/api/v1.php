@@ -3,6 +3,7 @@
 require_once $_SERVER['DOCUMENT_ROOT']."/../src/database.php";
 require_once $_SERVER['DOCUMENT_ROOT']."../../src/DAO/User.php";
 require_once $_SERVER['DOCUMENT_ROOT']."../../src/DAO/Comment.php";
+require_once $_SERVER['DOCUMENT_ROOT']."../../src/DAO/DisplayComment.php";
 
 session_start();
 
@@ -77,6 +78,6 @@ if ($json->function == "fetch_user") {
         echo json_encode(["status" => false, "message" => "No valid session"]);
     }
 } else if ($json->function == "fetch_comments") {
-    $comments = Comment::fetch_chronological(10, 0);
+    $comments = DisplayComment::fetch_chronological(10, 0);
     echo json_encode($comments);
 }
