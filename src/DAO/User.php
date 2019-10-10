@@ -10,7 +10,7 @@ class User
     private $password;
     public $date;
 
-    public static function fetch($user_id)
+    public static function fetch($user_id): ?User
     {
         $stmt = Database::get_pdo()->prepare("SELECT * FROM User WHERE id = :id;");
         $stmt->bindParam(":id", $user_id, PDO::PARAM_INT);
@@ -21,7 +21,7 @@ class User
         return $user;
     }
 
-    public static function fetch_by_email($email)
+    public static function fetch_by_email($email): ?User
     {
         $stmt = Database::get_pdo()->prepare("SELECT * FROM User WHERE email = :email;");
         $stmt->bindParam(":email", $email, PDO::PARAM_STR);
@@ -32,7 +32,7 @@ class User
         return $user;
     }
 
-    public function save()
+    public function save(): void
     {
         if (!$this->validate_email()) return;
 
@@ -50,27 +50,31 @@ class User
         $stmt->execute();
     }
 
-    public function set_password($password) {
+    public function set_password($password): boolean
+    {
         if (strlen($password) < 8) return false;
 
         $this->password = password_hash($password, PASSWORD_DEFAULT);
         return true;
     }
 
-    public function get_id() {
+    public function get_id(): int
+    {
         return $this->id;
     }
 
-    public function verify($password)
+    public function verify($password): boolean
     {
         return password_verify($password, $this->password);
     }
 
-    public function validate_email() {
+    public function validate_email(): boolean
+    {
         return filter_var($this->email, FILTER_VALIDATE_EMAIL);
     }
 
-    public function fetch_comments($num, $page) {
+    public function fetch_comments($num, $page)
+    {
         $stmt = Database::get_pdo()->prepare("SELECT * FROM Comment WHERE user_id = :id ORDER BY date DESC LIMIT :limit OFFSET :offset");
         $stmt->bindParam(":id", $this->id);
         $stmt->bindParam(":limit", $num, PDO::PARAM_INT);
