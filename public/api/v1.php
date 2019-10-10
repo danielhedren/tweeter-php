@@ -61,16 +61,20 @@ if ($json->function == "fetch_user") {
         echo json_encode(["status" => false]);
     }
 } else if ($json->function == "create_comment") {
-    $comment = new Comment();
-    $comment->user_id = $json->user_id;
-    if (property_exists($json, "parent_id")) $comment->parent_id = $json->parent_id;
-    $comment->content = $json->content;
+    if (isset($_SESSION["userid"])) {
+        $comment = new Comment();
+        $comment->user_id = $_SESSION["userid"];
+        if (property_exists($json, "parent_id")) $comment->parent_id = $json->parent_id;
+        $comment->content = $json->content;
 
-    try {
-        $comment->save();
-        echo json_encode(["status" => true]);
-    } catch (Exception $e) {
-        echo json_encode(["status" => true, "message" => $e->getMessage()]);
+        try {
+            $comment->save();
+            echo json_encode(["status" => true]);
+        } catch (Exception $e) {
+            echo json_encode(["status" => false, "message" => $e->getMessage()]);
+        }
+    } else {
+        echo json_encode(["status" => false, "message" => "No valid session"]);
     }
 } else if ($json->function == "fetch_comments") {
     $comments = Comment::fetch_chronological(10, 0);
