@@ -9,10 +9,10 @@ class Comment
     public $parent_id;
     public $content;
 
-    public static function fetch($id): Comment
+    public static function fetch($id)
     {
         $stmt = Database::get_pdo()->prepare("SELECT * FROM Comment WHERE id = :id;");
-        $stmt->bindParam(":id", id, PDO::PARAM_INT);
+        $stmt->bindParam(":id", $id, PDO::PARAM_INT);
         $stmt->execute();
         $comment = $stmt->fetchObject(self::class);
         if (!comment) return null;
@@ -23,7 +23,7 @@ class Comment
     public function save(): void
     {
         if (isset($this->id)) {
-            $stmt = Database::get_pdo()->prepare("UPDATE Comment SET user_id = :user_id, parent_id = :parent_id, content = :content WHERE id = :id);");
+            $stmt = Database::get_pdo()->prepare("UPDATE Comment SET user_id = :user_id, parent_id = :parent_id, content = :content WHERE id = :id;");
             $stmt->bindParam(":id", $this->id, PDO::PARAM_INT);
         } else {
             $stmt = Database::get_pdo()->prepare("INSERT INTO Comment (user_id, parent_id, content) VALUES (:user_id, :parent_id, :content);");

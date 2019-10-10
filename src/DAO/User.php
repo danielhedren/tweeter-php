@@ -10,7 +10,7 @@ class User
     private $password;
     public $date;
 
-    public static function fetch($user_id): ?User
+    public static function fetch($user_id)
     {
         $stmt = Database::get_pdo()->prepare("SELECT * FROM User WHERE id = :id;");
         $stmt->bindParam(":id", $user_id, PDO::PARAM_INT);
@@ -21,7 +21,7 @@ class User
         return $user;
     }
 
-    public static function fetch_by_email($email): ?User
+    public static function fetch_by_email($email)
     {
         $stmt = Database::get_pdo()->prepare("SELECT * FROM User WHERE email = :email;");
         $stmt->bindParam(":email", $email, PDO::PARAM_STR);
@@ -37,7 +37,7 @@ class User
         if (!$this->validate_email()) return;
 
         if (isset($this->id)) {
-            $stmt = Database::get_pdo()->prepare("UPDATE User SET email = :email, displayname = :displayname, password = :password WHERE id = :id);");
+            $stmt = Database::get_pdo()->prepare("UPDATE User SET email = :email, displayname = :displayname, password = :password WHERE id = :id;");
             $stmt->bindParam(":id", $this->id, PDO::PARAM_INT);
         } else {
             $stmt = Database::get_pdo()->prepare("INSERT INTO User (email, displayname, password) VALUES (:email, :displayname, :password);");

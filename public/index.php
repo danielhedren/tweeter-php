@@ -1,5 +1,6 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT']."../../src/DAO/Comment.php";
+require_once $_SERVER['DOCUMENT_ROOT']."../../src/DAO/User.php";
 ?>
 
 <!doctype html>
@@ -27,25 +28,31 @@ require_once $_SERVER['DOCUMENT_ROOT']."../../src/DAO/Comment.php";
         </ul>
         <?php
         if (!isset($_SESSION["userid"])) {
-            echo '<form id="loginForm" class="form-inline my-2 my-lg-0">';
-            echo '    <input id="loginEmail" class="form-control mr-sm-2" type="email" placeholder="Email" aria-label="Email">';
-            echo '    <input id="loginPassword" class="form-control mr-sm-2" type="password" placeholder="Password" aria-label="Password">';
-            echo '    <button id="loginButton" class="btn btn-outline-success my-2 my-sm-0" type="submit">Login</button>';
-            echo '</form>';
+            ?>
+            <form id="loginForm" class="form-inline my-2 my-lg-0">
+                <input id="loginEmail" class="form-control mr-sm-2" type="email" placeholder="Email" aria-label="Email">
+                <input id="loginPassword" class="form-control mr-sm-2" type="password" placeholder="Password" aria-label="Password">
+                <button id="loginButton" class="btn btn-outline-success my-2 my-sm-0" type="submit">Login</button>
+            </form>';
+            <?php
         }
         ?>
     </div>
 </nav>
 
 <div class="container">
-    <h1>Hello, world!</h1>
-
     <?php
     $comments = Comment::fetch_chronological(10, 0);
 
     foreach ($comments as $c) {
-
-        echo '<div class="card"><div class="card-body">'.$c->content.'</div></div>';
+        ?>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title"><?php echo User::fetch_by_id($c->user_id)->displayname ?></h5>
+                <p class="card-text"><?php echo $c->content ?></p>
+            </div>
+        </div>
+        <?php
     }
     ?>
 </div>
