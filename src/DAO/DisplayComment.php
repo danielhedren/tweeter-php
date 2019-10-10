@@ -10,6 +10,12 @@ class DisplayComment
     public $content;
     public $displayname;
 
+    public function __construct()
+    {
+        $this->content = htmlspecialchars($this->content);
+        $this->displayname = htmlspecialchars($this->displayname);
+    }
+
     public static function fetch($id) {
         $stmt = Database::get_pdo()->prepare("SELECT c.*, u.displayname FROM Comment c JOIN User u ON c.user_id = u.id WHERE id = :id;");
         $stmt->bindParam(":id", $id, PDO::PARAM_INT);
