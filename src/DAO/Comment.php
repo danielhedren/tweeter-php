@@ -9,7 +9,8 @@ class Comment
     public $parent_id;
     public $content;
 
-    public static function fetch($id) {
+    public static function fetch($id): Comment
+    {
         $stmt = Database::get_pdo()->prepare("SELECT * FROM Comment WHERE id = :id;");
         $stmt->bindParam(":id", id, PDO::PARAM_INT);
         $stmt->execute();
@@ -19,7 +20,8 @@ class Comment
         return $comment;
     }
 
-    public function save() {
+    public function save(): void
+    {
         if (isset($this->id)) {
             $stmt = Database::get_pdo()->prepare("UPDATE Comment SET user_id = :user_id, parent_id = :parent_id, content = :content WHERE id = :id);");
             $stmt->bindParam(":id", $this->id, PDO::PARAM_INT);
@@ -34,7 +36,8 @@ class Comment
         $stmt->execute();
     }
 
-    public static function fetch_chronological($num, $page) {
+    public static function fetch_chronological($num, $page)
+    {
         $stmt = Database::get_pdo()->prepare("SELECT * FROM Comment ORDER BY date DESC LIMIT :limit OFFSET :offset");
         $stmt->bindParam(":limit", $num, PDO::PARAM_INT);
         $stmt->bindValue(":offset", $page * $num, PDO::PARAM_INT);
