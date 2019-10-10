@@ -50,7 +50,7 @@ class User
         $stmt->execute();
     }
 
-    public function set_password($password): boolean
+    public function set_password($password): bool
     {
         if (strlen($password) < 8) return false;
 
@@ -63,12 +63,12 @@ class User
         return $this->id;
     }
 
-    public function verify($password): boolean
+    public function verify($password): bool
     {
         return password_verify($password, $this->password);
     }
 
-    public function validate_email(): boolean
+    public function validate_email(): bool
     {
         return filter_var($this->email, FILTER_VALIDATE_EMAIL);
     }
