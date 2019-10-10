@@ -127,7 +127,7 @@ session_start();
 </div>
 
 <!-- Comments -->
-<div class="container">
+<div id="commentsContainer" class="container">
     <?php
     $comments = Comment::fetch_chronological(10, 0);
 
@@ -139,7 +139,7 @@ session_start();
                 <h6 class="card-subtitle mb-2 text-muted"><?php echo $c->date ?></h6>
             </div>
             <div class="card-body">
-                <p class="card-text"><?php echo $c->content ?></p>
+                <p class="card-text"><?php echo htmlspecialchars($c->content) ?></p>
             </div>
         </div>
         <?php
@@ -189,12 +189,11 @@ session_start();
         }, (response) => {
             if (response["status"]) {
                 document.querySelector("#loginModal > div > div > div.modal-header > button").click();
-                document.querySelector("#loginModal .alert").style.display = "none";
+
                 document.querySelector("#navLoggedOut").style.display = "none";
                 document.querySelector("#navLoggedIn").style.display = "block";
-            } else {
-                document.querySelector("#loginModal .alert").style.display = "block";
             }
+            document.querySelector("#loginModal .alert").style.display = response["status"] ? "none" : "block";
         });
     }
 
@@ -231,9 +230,8 @@ session_start();
             if (response["status"]) {
                 document.querySelector("#registerModal > div > div > div.modal-header > button").click();
                 login(email, password);
-            } else {
-                document.querySelector("#registerModal .alert").style.display = "block";
             }
+            document.querySelector("#registerModal .alert").style.display = response["status"] ? "none" : "block";
         });
     }
 
@@ -253,6 +251,51 @@ session_start();
 
     document.querySelector("#logoutButton").onclick = () => {
         logout();
+    }
+
+    /*
+        Post comment
+    */
+    document.querySelector("#commentButton").onclick = () => {
+        var content = document.querySelector("#commentText").value;
+
+        postJson({
+            "function": "create_comment",
+            "content": content
+        }, (response) => {
+            if (response["status"]) {
+                document.querySelector("#commentModal > div > div > div.modal-header > button").click();
+                fetchComments();
+            }
+            document.querySelector("#commentModal .alert").style.display = response["status"] ? "none" : "block";
+        });
+    }
+
+    /*
+        Fetch comments
+    */
+    function fetchComments(num, page) {
+        postJson({
+            "function": "fetch_comments"
+        }, (response) => {
+            var container = document.getElementById("commentsContainer");
+            container.innerHTML = "";
+
+            response.forEach((comment) => {
+                container.innerHTML += getCommentCardHtml(comment);
+            });
+        });
+    }
+
+    function getCommentCardHtml(comment) {
+        var html = '<div class="card mt-3"><div class="card-header"><h5 class="card-title">';
+        html += comment["displayname"];
+        html += '</h5><h6 class="card-subtitle mb-2 text-muted">';
+        html += comment["date"];
+        html += '</h6></div><div class="card-body"><p class="card-text">';
+        html += comment["content"];
+        html += '</p></div></div>';
+        return html;
     }
 </script>
 </body>
