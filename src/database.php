@@ -1,5 +1,9 @@
 <?php
 
+namespace tweeter;
+
+use PDO;
+
 require_once $_SERVER['DOCUMENT_ROOT']."/../config/db_config.php";
 
 class Database
@@ -8,9 +12,9 @@ class Database
 
     static function get_pdo() {
         if (!isset($_pdo)) {
-            $_pdo = new PDO("mysql:host=".DATABASE_HOST.";dbname=".DATABASE_NAME.";charset=utf8mb4",
-                DATABASE_USER,
-                DATABASE_PASSWORD,
+            $_pdo = new PDO("mysql:host=".DB_Config::DATABASE_HOST.";dbname=".DB_Config::DATABASE_NAME.";charset=utf8mb4",
+                DB_Config::DATABASE_USER,
+                DB_Config::DATABASE_PASSWORD,
                 array(
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                     PDO::ATTR_PERSISTENT => false

@@ -1,6 +1,8 @@
 <?php
 
-require_once $_SERVER['DOCUMENT_ROOT']."/../src/database.php";
+namespace tweeter\DAO;
+
+use tweeter\Database;
 
 class User
 {

@@ -1,9 +1,11 @@
 <?php
 
-require_once $_SERVER['DOCUMENT_ROOT']."/../src/database.php";
-require_once $_SERVER['DOCUMENT_ROOT']."../../src/DAO/User.php";
-require_once $_SERVER['DOCUMENT_ROOT']."../../src/DAO/Comment.php";
-require_once $_SERVER['DOCUMENT_ROOT']."../../src/DAO/DisplayComment.php";
+namespace tweeter\api;
+
+use mysql_xdevapi\Exception;
+use tweeter\DAO\User;
+use tweeter\DAO\Comment;
+use tweeter\DAO\DisplayComment;
 
 session_start();
 

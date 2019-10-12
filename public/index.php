@@ -1,7 +1,11 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . "../../src/DAO/DisplayComment.php";
+
+namespace tweeter;
+
+use tweeter\DAO\DisplayComment;
 
 session_start();
+
 ?>
 
 <!doctype html>
