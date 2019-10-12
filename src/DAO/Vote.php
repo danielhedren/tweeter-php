@@ -19,4 +19,18 @@ class Vote
 
         return $vote;
     }
+
+    public function save() {
+        if (isset($this->id)) {
+            $stmt = Database::get_pdo()->prepare("UPDATE Vote SET user_id = :user_id, comment_id = :comment_id WHERE id = :id;");
+            $stmt->bindParam(":id", $this->id, \PDO::PARAM_INT);
+        } else {
+            $stmt = Database::get_pdo()->prepare("INSERT INTO Vote (user_id, comment_id) VALUES (:user_id, :comment_id);");
+        }
+        $stmt->bindParam(":user_id", $this->user_id, \PDO::PARAM_INT);
+        $stmt->bindParam(":comment_id", $this->comment_id, \PDO::PARAM_INT);
+
+        // TODO: Handle unique constraint exceptions
+        $stmt->execute();
+    }
 }
