@@ -2,10 +2,9 @@
 
 namespace tweeter\api;
 
-use mysql_xdevapi\Exception;
-use tweeter\DAO\User;
-use tweeter\DAO\Comment;
-use tweeter\DAO\DisplayComment;
+require_once $_SERVER["DOCUMENT_ROOT"]."/../src/autoloader.php";
+
+use tweeter\DAO\{User, Comment, DisplayComment};
 
 session_start();
 
@@ -30,7 +29,7 @@ if ($json->function == "fetch_user") {
         }
         try {
             $new_user->save();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             //TODO: User friendly error messages
             echo json_encode(["status" => false, "message" => $e->getMessage()]);
             return;
@@ -73,7 +72,7 @@ if ($json->function == "fetch_user") {
         try {
             $comment->save();
             echo json_encode(["status" => true]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo json_encode(["status" => false, "message" => $e->getMessage()]);
         }
     } else {

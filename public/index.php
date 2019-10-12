@@ -2,6 +2,8 @@
 
 namespace tweeter;
 
+require_once $_SERVER["DOCUMENT_ROOT"]."/../src/autoloader.php";
+
 use tweeter\DAO\DisplayComment;
 
 session_start();

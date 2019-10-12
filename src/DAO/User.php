@@ -15,7 +15,7 @@ class User
     public static function fetch($user_id)
     {
         $stmt = Database::get_pdo()->prepare("SELECT * FROM User WHERE id = :id;");
-        $stmt->bindParam(":id", $user_id, PDO::PARAM_INT);
+        $stmt->bindParam(":id", $user_id, \PDO::PARAM_INT);
         $stmt->execute();
         $user = $stmt->fetchObject(self::class);
         if (!$user) return null;
@@ -26,7 +26,7 @@ class User
     public static function fetch_by_email($email)
     {
         $stmt = Database::get_pdo()->prepare("SELECT * FROM User WHERE email = :email;");
-        $stmt->bindParam(":email", $email, PDO::PARAM_STR);
+        $stmt->bindParam(":email", $email, \PDO::PARAM_STR);
         $stmt->execute();
         $user = $stmt->fetchObject(self::class);
         if (!$user) return null;
@@ -40,13 +40,13 @@ class User
 
         if (isset($this->id)) {
             $stmt = Database::get_pdo()->prepare("UPDATE User SET email = :email, displayname = :displayname, password = :password WHERE id = :id;");
-            $stmt->bindParam(":id", $this->id, PDO::PARAM_INT);
+            $stmt->bindParam(":id", $this->id, \PDO::PARAM_INT);
         } else {
             $stmt = Database::get_pdo()->prepare("INSERT INTO User (email, displayname, password) VALUES (:email, :displayname, :password);");
         }
-        $stmt->bindParam(":email", $this->email, PDO::PARAM_STR);
-        $stmt->bindParam(":displayname", $this->displayname, PDO::PARAM_STR);
-        $stmt->bindParam(":password", $this->password, PDO::PARAM_STR);
+        $stmt->bindParam(":email", $this->email, \PDO::PARAM_STR);
+        $stmt->bindParam(":displayname", $this->displayname, \PDO::PARAM_STR);
+        $stmt->bindParam(":password", $this->password, \PDO::PARAM_STR);
 
         // TODO: Handle unique constraint exceptions
         $stmt->execute();
@@ -79,11 +79,11 @@ class User
     {
         $stmt = Database::get_pdo()->prepare("SELECT * FROM Comment WHERE user_id = :id ORDER BY date DESC LIMIT :limit OFFSET :offset");
         $stmt->bindParam(":id", $this->id);
-        $stmt->bindParam(":limit", $num, PDO::PARAM_INT);
-        $stmt->bindValue(":offset", $page * $num, PDO::PARAM_INT);
+        $stmt->bindParam(":limit", $num, \PDO::PARAM_INT);
+        $stmt->bindValue(":offset", $page * $num, \PDO::PARAM_INT);
         $stmt->execute();
 
-        $result = $stmt->fetchAll(PDO::FETCH_CLASS, "Comment");
+        $result = $stmt->fetchAll(\PDO::FETCH_CLASS, "Comment");
 
         return $result;
     }

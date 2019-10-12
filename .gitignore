@@ -1,2 +1,2 @@
 
-config/db_config.php
+src/config/DB_Config.php
