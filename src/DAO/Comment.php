@@ -7,10 +7,10 @@ use tweeter\Database;
 
 class Comment
 {
-    private $id;
-    public $user_id;
-    public $parent_id;
-    public $content;
+    private int $id;
+    public int $user_id;
+    public int $parent_id;
+    public string $content;
 
     public static function fetch($id): ?Comment
     {

@@ -7,11 +7,11 @@ use tweeter\Database;
 
 class DisplayComment
 {
-    private $id;
-    public $user_id;
-    public $parent_id;
-    public $content;
-    public $displayname;
+    private int $id;
+    public int $user_id;
+    public int $parent_id;
+    public string $content;
+    public string $displayname;
 
     public function __construct()
     {

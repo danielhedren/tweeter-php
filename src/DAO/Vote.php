@@ -7,9 +7,9 @@ use tweeter\Database;
 
 class Vote
 {
-    private $id;
-    public $user_id;
-    public $comment_id;
+    private int $id;
+    public int $user_id;
+    public int $comment_id;
 
     public static function fetch($id): ?Vote
     {

@@ -7,11 +7,11 @@ use tweeter\Database;
 
 class User
 {
-    private $id;
-    public $email;
-    public $displayname;
-    private $password;
-    public $date;
+    private int $id;
+    public string $email;
+    public string $displayname;
+    private string $password;
+    public string $date;
 
     public static function fetch($user_id): ?User
     {
