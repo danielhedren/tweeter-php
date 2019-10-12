@@ -8,4 +8,6 @@ The database needs to handle tweets, retweets and comment threads.
 
 `Comment(id, user_id, parent_id, content, date)`
 
-`Vote(id, user_id, comment_id)`
+`Vote(id)`
+
+`VoteTernary(user_id, comment_id, vote_id)`

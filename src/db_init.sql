@@ -22,9 +22,15 @@ CREATE TABLE IF NOT EXISTS Comment (
 
 CREATE TABLE IF NOT EXISTS Vote (
                       id INT NOT NULL AUTO_INCREMENT,
+                      CONSTRAINT PK_Vote PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS VoteTernary (
+                      vote_id INT NOT NULL,
                       user_id INT NOT NULL,
                       comment_id INT NOT NULL,
-                      CONSTRAINT PK_Like PRIMARY KEY (id),
-                      CONSTRAINT FK_Like_User FOREIGN KEY (user_id) REFERENCES User (id),
-                      CONSTRAINT FK_Like_Comment FOREIGN KEY (comment_id) REFERENCES Comment (id)
+                      CONSTRAINT PK_VoteTernary PRIMARY KEY (user_id, comment_id),
+                      CONSTRAINT FK_VoteTernary_Vote FOREIGN KEY (vote_id) REFERENCES Vote (id),
+                      CONSTRAINT FK_VoteTernary__User FOREIGN KEY (user_id) REFERENCES User (id),
+                      CONSTRAINT FK_VoteTernary_Comment FOREIGN KEY (comment_id) REFERENCES Comment (id)
 );
