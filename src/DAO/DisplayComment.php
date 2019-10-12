@@ -35,7 +35,7 @@ class DisplayComment
         $stmt->bindValue(":offset", $page * $num, \PDO::PARAM_INT);
         $stmt->execute();
 
-        $result = $stmt->fetchAll(\PDO::FETCH_CLASS, "DisplayComment");
+        $result = $stmt->fetchAll(\PDO::FETCH_CLASS, self::class);
 
         return $result;
     }
