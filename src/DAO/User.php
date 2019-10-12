@@ -76,7 +76,7 @@ class User
         return filter_var($this->email, FILTER_VALIDATE_EMAIL);
     }
 
-    public function fetch_comments($num, $page)
+    public function fetch_comments($num, $page): array
     {
         $stmt = Database::get_pdo()->prepare("SELECT * FROM Comment WHERE user_id = :id ORDER BY date DESC LIMIT :limit OFFSET :offset");
         $stmt->bindParam(":id", $this->id);

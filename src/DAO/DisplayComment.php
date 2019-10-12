@@ -35,7 +35,7 @@ class DisplayComment
         return $comment;
     }
 
-    public static function fetch_chronological($num, $page)
+    public static function fetch_chronological($num, $page): array
     {
         $stmt = Database::get_pdo()->prepare("SELECT c.*, u.displayname FROM Comment c JOIN User u ON c.user_id = u.id ORDER BY c.date DESC LIMIT :limit OFFSET :offset");
         $stmt->bindParam(":limit", $num, PDO::PARAM_INT);
