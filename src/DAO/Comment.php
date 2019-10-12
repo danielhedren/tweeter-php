@@ -9,8 +9,8 @@ class Comment
 {
     private int $id;
     public int $user_id;
-    public int $parent_id;
-    public string $content;
+    public ?int $parent_id;
+    public ?string $content;
 
     public static function fetch($id): ?Comment
     {
