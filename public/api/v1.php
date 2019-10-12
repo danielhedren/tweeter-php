@@ -4,7 +4,8 @@ namespace tweeter\api;
 
 require_once $_SERVER["DOCUMENT_ROOT"]."/../src/autoloader.php";
 
-use tweeter\DAO\{User, Comment, DisplayComment};
+use Exception;
+use tweeter\DAO\{User, Comment, Vote, DisplayComment};
 
 session_start();
 
@@ -29,7 +30,7 @@ if ($json->function == "fetch_user") {
         }
         try {
             $new_user->save();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             //TODO: User friendly error messages
             echo json_encode(["status" => false, "message" => $e->getMessage()]);
             return;
@@ -72,7 +73,7 @@ if ($json->function == "fetch_user") {
         try {
             $comment->save();
             echo json_encode(["status" => true]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             echo json_encode(["status" => false, "message" => $e->getMessage()]);
         }
     } else {
@@ -81,4 +82,23 @@ if ($json->function == "fetch_user") {
 } else if ($json->function == "fetch_comments") {
     $comments = DisplayComment::fetch_chronological(10, 0);
     echo json_encode($comments);
+} else if ($json->function == "create_vote") {
+    if (isset($_SESSION["userid"])) {
+        $user = User::fetch($_SESSION["userid"]);
+        if ($user) {
+            $vote = new Vote();
+            $vote->comment_id = $json->comment_id;
+            $vote->user_id = $user->get_id();
+
+            try {
+                $vote->save();
+            } catch (Exception $e) {
+                echo json_encode(["status" => false, "message" => $e->getMessage()]);
+            }
+        } else {
+            echo json_encode(["status" => false, "message" => "Invalid user"]);
+        }
+    } else {
+        echo json_encode(["status" => false, "message" => "No valid session"]);
+    }
 }
