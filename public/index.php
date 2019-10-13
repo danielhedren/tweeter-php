@@ -26,6 +26,22 @@ session_start();
 
 <body>
 
+<!-- Comment card template -->
+<template id="comment-card-template">
+    <div class="card mt-3">
+        <div class="card-header">
+            <h5 class="card-title"><slot name="displayname">displayname</slot></h5>
+            <h6 class="card-subtitle mb-2 text-muted">@<slot name="user_id">user_id</slot> | <slot name="date">date</slot></h6>
+        </div>
+        <div class="card-body">
+            <p class="card-text"><slot name="content">content</slot></p>
+        </div>
+        <div class="card-footer">
+            <button type="button" class="btn btn-link btn-sm">Like</button>
+        </div>
+    </div>
+</template>
+
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="#">Tweeter</a>
@@ -139,28 +155,7 @@ session_start();
 </div>
 
 <!-- Comments -->
-<div id="commentsContainer" class="container col-4">
-    <?php
-    $comments = DisplayComment::fetch_chronological(10, 0);
-
-    foreach ($comments as $c) {
-        ?>
-        <div class="card mt-3">
-            <div class="card-header">
-                <h5 class="card-title"><?php echo $c->displayname ?></h5>
-                <h6 class="card-subtitle mb-2 text-muted"><?php echo "@".$c->user_id." | ".$c->date ?></h6>
-            </div>
-            <div class="card-body">
-                <p class="card-text"><?php echo $c->content ?></p>
-            </div>
-            <div class="card-footer">
-                <button type="button" class="btn btn-link btn-sm">Yeah!</button>
-            </div>
-        </div>
-        <?php
-    }
-    ?>
-</div>
+<div id="commentsContainer" class="container"></div>
 
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->

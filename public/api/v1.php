@@ -2,7 +2,7 @@
 
 namespace tweeter\api;
 
-require_once $_SERVER["DOCUMENT_ROOT"]."/../src/autoloader.php";
+require_once $_SERVER["DOCUMENT_ROOT"] . "/../src/autoloader.php";
 
 use Exception;
 use tweeter\DAO\{User, Comment, Vote, DisplayComment};

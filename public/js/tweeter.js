@@ -1,4 +1,4 @@
-(function() {
+(function () {
     "use strict;"
 
     /*
@@ -10,7 +10,7 @@
         xmlHttp.setRequestHeader("Content-Type", "application/json");
         xmlHttp.send(JSON.stringify(data));
         xmlHttp.onreadystatechange = () => {
-            if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+            if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
                 let jsonResponse;
                 // Break if response is unparseable
                 try {
@@ -63,7 +63,7 @@
         let password = document.querySelector("#registerPassword1").value;
         let password2 = document.querySelector("#registerPassword2").value;
 
-        if (password != password2) {
+        if (password !== password2) {
             return;
         }
 
@@ -137,13 +137,34 @@
         Format comment cards
     */
     function getCommentCardHtml(comment) {
-        let html = '<div class="card mt-3"><div class="card-header"><h5 class="card-title">';
-        html += comment["displayname"];
-        html += '</h5><h6 class="card-subtitle mb-2 text-muted">';
-        html += comment["date"];
-        html += '</h6></div><div class="card-body"><p class="card-text">';
-        html += comment["content"];
-        html += '</p></div></div>';
-        return html;
+        return "<tweeter-comment-card displayname='" + comment["displayname"] + "' user_id='" + comment["user_id"] + "' date='" + comment["date"] + "' content='" + comment["content"] + "'></comment-card>";
+    }
+
+    /*
+        Define comment-card element
+     */
+    customElements.define("tweeter-comment-card",
+        class extends HTMLElement {
+            constructor() {
+                super();
+                let template = document
+                    .getElementById("comment-card-template")
+                    .content;
+                this.appendChild(template.cloneNode(true));
+                this.querySelector("[name='displayname'").innerHTML = this.getAttribute("displayname");
+                this.querySelector("[name='user_id'").innerHTML = this.getAttribute("user_id");
+                this.querySelector("[name='date'").innerHTML = this.getAttribute("date");
+                this.querySelector("[name='content'").innerHTML = this.getAttribute("content");
+            }
+        });
+
+    /*
+        OnLoad
+    */
+    window.onload = () => {
+        setInterval(() => {
+            fetchComments(10, 0);
+        }, 10000);
+        fetchComments(10, 0);
     }
 })();
