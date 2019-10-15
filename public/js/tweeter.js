@@ -176,11 +176,9 @@
         OnLoad
     */
     window.onload = () => {
-        /*
         setInterval(() => {
             fetchComments(10, 0);
         }, 10000);
-        */
         fetchComments(10, 0);
     }
 })();
