@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS Comment (
 
 CREATE TABLE IF NOT EXISTS Vote (
                       id INT NOT NULL AUTO_INCREMENT,
+                      date DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
                       CONSTRAINT PK_Vote PRIMARY KEY (id)
 );
 

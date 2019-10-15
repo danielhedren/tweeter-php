@@ -86,12 +86,8 @@ if ($json->function == "fetch_user") {
     if (isset($_SESSION["userid"])) {
         $user = User::fetch($_SESSION["userid"]);
         if ($user) {
-            $vote = new Vote();
-            $vote->comment_id = $json->comment_id;
-            $vote->user_id = $user->get_id();
-
             try {
-                $vote->save();
+                Vote::create($user->get_id(), $json->comment_id);
             } catch (Exception $e) {
                 echo json_encode(["status" => false, "message" => $e->getMessage()]);
             }
