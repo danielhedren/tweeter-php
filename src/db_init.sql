@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS VoteTernary (
                       user_id INT NOT NULL,
                       comment_id INT NOT NULL,
                       CONSTRAINT PK_VoteTernary PRIMARY KEY (user_id, comment_id),
-                      CONSTRAINT FK_VoteTernary_Vote FOREIGN KEY (vote_id) REFERENCES Vote (id),
-                      CONSTRAINT FK_VoteTernary__User FOREIGN KEY (user_id) REFERENCES User (id),
-                      CONSTRAINT FK_VoteTernary_Comment FOREIGN KEY (comment_id) REFERENCES Comment (id)
+                      CONSTRAINT FK_VoteTernary_Vote FOREIGN KEY (vote_id) REFERENCES Vote (id) ON DELETE CASCADE,
+                      CONSTRAINT FK_VoteTernary__User FOREIGN KEY (user_id) REFERENCES User (id) ON DELETE CASCADE,
+                      CONSTRAINT FK_VoteTernary_Comment FOREIGN KEY (comment_id) REFERENCES Comment (id) ON DELETE CASCADE
 );

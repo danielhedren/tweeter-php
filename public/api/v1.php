@@ -88,8 +88,9 @@ if ($json->function == "fetch_user") {
         if ($user) {
             try {
                 Vote::create($user->get_id(), $json->comment_id);
+                echo json_encode(["status" => true]);
             } catch (Exception $e) {
-                echo json_encode(["status" => false, "message" => $e->getMessage()]);
+                echo json_encode(["status" => false, "message" => $e]);
             }
         } else {
             echo json_encode(["status" => false, "message" => "Invalid user"]);

@@ -7,7 +7,7 @@ use tweeter\Database;
 
 class DisplayComment
 {
-    private int $id;
+    public int $id;
     public int $user_id;
     public ?int $parent_id;
     public ?string $content;
@@ -18,11 +18,6 @@ class DisplayComment
     {
         $this->content = htmlspecialchars($this->content);
         $this->displayname = htmlspecialchars($this->displayname);
-    }
-
-    public function get_id(): int
-    {
-        return $this->id;
     }
 
     public static function fetch($id): ?DisplayComment
