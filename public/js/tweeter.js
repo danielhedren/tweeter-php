@@ -4,7 +4,7 @@
     /*
         Utility method for API calls
     */
-    function postJson(data) {
+    function apiRequest(data) {
         return new Promise((resolve, reject) => {
             let xmlHttp = new XMLHttpRequest();
             xmlHttp.open("POST", "/api/v1.php", true); // true for asynchronous
@@ -12,17 +12,14 @@
             xmlHttp.send(JSON.stringify(data));
             xmlHttp.onreadystatechange = () => {
                 if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
-                    let jsonResponse;
-                    // Break if response is unparseable
                     try {
-                        jsonResponse = JSON.parse(xmlHttp.response);
+                        let jsonResponse = JSON.parse(xmlHttp.response);
+                        resolve(jsonResponse);
                     } catch (e) {
                         reject("Malformed JSON response.");
                     }
-
-                    resolve(jsonResponse);
-                } else {
-                    reject("Server error.");
+                } else if (xmlHttp.readyState === 4 && xmlHttp.status != 200) {
+                    reject("Server error. " + xmlHttp.status + ": " + xmlHttp.statusText);
                 }
             }
         });
@@ -32,7 +29,7 @@
         Login
     */
     function login(email, password) {
-        postJson({
+        apiRequest({
             "function": "verify_user",
             "email": email,
             "password": password
@@ -73,7 +70,7 @@
             return;
         }
 
-        postJson({
+        apiRequest({
             "function": "create_user",
             "email": email,
             "displayname": displayname,
@@ -93,7 +90,7 @@
         Logout
     */
     function logout() {
-        postJson({
+        apiRequest({
             "function": "logout_user"
         }).then((response) => {
             if (response["status"]) {
@@ -115,7 +112,7 @@
     document.querySelector("#commentButton").onclick = () => {
         let content = document.querySelector("#commentText").value;
 
-        postJson({
+        apiRequest({
             "function": "create_comment",
             "content": content
         }).then((response) => {
@@ -133,7 +130,7 @@
         Fetch comments
     */
     function fetchComments(num, page) {
-        postJson({
+        apiRequest({
             "function": "fetch_comments"
         }).then((response) => {
             let container = document.getElementById("commentsContainer");
