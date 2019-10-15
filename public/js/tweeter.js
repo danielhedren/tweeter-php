@@ -131,14 +131,19 @@
     */
     function fetchComments(num, page) {
         apiRequest({
-            "function": "fetch_comments"
+            "function": "fetch_comments",
+            "num": num,
+            "page": page
         }).then((response) => {
             let container = document.getElementById("commentsContainer");
             container.innerHTML = "";
+            let comment_html = "";
 
             response.forEach((comment) => {
-                container.innerHTML += getCommentCardHtml(comment);
+                comment_html += getCommentCardHtml(comment);
             });
+
+            container.innerHTML += comment_html;
         }).catch((reason) => {
             console.log(reason);
         });
@@ -148,7 +153,7 @@
         Format comment cards
     */
     function getCommentCardHtml(comment) {
-        return "<tweeter-comment-card displayname='" + comment["displayname"] + "' user_id='" + comment["user_id"] + "' date='" + comment["date"] + "' content='" + comment["content"] + "'></comment-card>";
+        return "<tweeter-comment-card displayname='" + comment["displayname"] + "' user_id='" + comment["user_id"] + "' date='" + comment["date"] + "' content='" + comment["content"] + "'></tweeter-comment-card>";
     }
 
     /*
@@ -158,14 +163,12 @@
         class extends HTMLElement {
             constructor() {
                 super();
-                let template = document
-                    .getElementById("comment-card-template")
-                    .content;
+                let template = document.getElementById("comment-card-template").content;
                 this.appendChild(template.cloneNode(true));
-                this.querySelector("[name='displayname'").innerHTML = this.getAttribute("displayname");
-                this.querySelector("[name='user_id'").innerHTML = this.getAttribute("user_id");
-                this.querySelector("[name='date'").innerHTML = this.getAttribute("date");
-                this.querySelector("[name='content'").innerHTML = this.getAttribute("content");
+                this.querySelector("[name='displayname']").innerHTML = this.getAttribute("displayname");
+                this.querySelector("[name='user_id']").innerHTML = this.getAttribute("user_id");
+                this.querySelector("[name='date']").innerHTML = this.getAttribute("date");
+                this.querySelector("[name='content']").innerHTML = this.getAttribute("content");
             }
         });
 
@@ -173,9 +176,11 @@
         OnLoad
     */
     window.onload = () => {
+        /*
         setInterval(() => {
             fetchComments(10, 0);
         }, 10000);
+        */
         fetchComments(10, 0);
     }
 })();
