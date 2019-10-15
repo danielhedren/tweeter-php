@@ -153,7 +153,7 @@
         Format comment cards
     */
     function getCommentCardHtml(comment) {
-        return "<tweeter-comment-card displayname='" + comment["displayname"] + "' user_id='" + comment["user_id"] + "' date='" + comment["date"] + "' content='" + comment["content"] + "'></tweeter-comment-card>";
+        return "<tweeter-comment-card displayname='" + comment["displayname"] + "' user_id='" + comment["user_id"] + "' date='" + comment["date"] + "' content='" + comment["content"] + "' votes='" + comment["votes"] + "'></tweeter-comment-card>";
     }
 
     /*
@@ -163,12 +163,16 @@
         class extends HTMLElement {
             constructor() {
                 super();
+            }
+
+            connectedCallback() {
                 let template = document.getElementById("comment-card-template").content;
                 this.appendChild(template.cloneNode(true));
                 this.querySelector("[name='displayname']").innerHTML = this.getAttribute("displayname");
                 this.querySelector("[name='user_id']").innerHTML = this.getAttribute("user_id");
                 this.querySelector("[name='date']").innerHTML = this.getAttribute("date");
                 this.querySelector("[name='content']").innerHTML = this.getAttribute("content");
+                this.querySelector("[name='votes']").innerHTML = this.getAttribute("votes");
             }
         });
 
