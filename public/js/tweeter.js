@@ -4,24 +4,28 @@
     /*
         Utility method for API calls
     */
-    function postJson(data, callback) {
-        let xmlHttp = new XMLHttpRequest();
-        xmlHttp.open("POST", "/api/v1.php", true); // true for asynchronous
-        xmlHttp.setRequestHeader("Content-Type", "application/json");
-        xmlHttp.send(JSON.stringify(data));
-        xmlHttp.onreadystatechange = () => {
-            if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
-                let jsonResponse;
-                // Break if response is unparseable
-                try {
-                    jsonResponse = JSON.parse(xmlHttp.response);
-                } catch (e) {
-                    return;
-                }
+    function postJson(data) {
+        return new Promise((resolve, reject) => {
+            let xmlHttp = new XMLHttpRequest();
+            xmlHttp.open("POST", "/api/v1.php", true); // true for asynchronous
+            xmlHttp.setRequestHeader("Content-Type", "application/json");
+            xmlHttp.send(JSON.stringify(data));
+            xmlHttp.onreadystatechange = () => {
+                if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
+                    let jsonResponse;
+                    // Break if response is unparseable
+                    try {
+                        jsonResponse = JSON.parse(xmlHttp.response);
+                    } catch (e) {
+                        reject("Malformed JSON response.");
+                    }
 
-                callback(jsonResponse);
+                    resolve(jsonResponse);
+                } else {
+                    reject("Server error.");
+                }
             }
-        }
+        });
     }
 
     /*
@@ -32,7 +36,7 @@
             "function": "verify_user",
             "email": email,
             "password": password
-        }, (response) => {
+        }).then((response) => {
             if (response["status"]) {
                 document.querySelector("#loginModal > div > div > div.modal-header > button").click();
 
@@ -40,6 +44,8 @@
                 document.querySelector("#navLoggedIn").style.display = "block";
             }
             document.querySelector("#loginModal .alert").style.display = response["status"] ? "none" : "block";
+        }).catch((reason) => {
+            console.log(reason);
         });
     }
 
@@ -72,12 +78,14 @@
             "email": email,
             "displayname": displayname,
             "password": password
-        }, (response) => {
+        }).then((response) => {
             if (response["status"]) {
                 document.querySelector("#registerModal > div > div > div.modal-header > button").click();
                 login(email, password);
             }
             document.querySelector("#registerModal .alert").style.display = response["status"] ? "none" : "block";
+        }).catch((reason) => {
+            console.log(reason);
         });
     }
 
@@ -87,11 +95,13 @@
     function logout() {
         postJson({
             "function": "logout_user"
-        }, (response) => {
+        }).then((response) => {
             if (response["status"]) {
                 document.querySelector("#navLoggedIn").style.display = "none";
                 document.querySelector("#navLoggedOut").style.display = "block";
             }
+        }).catch((reason) => {
+            console.log(reason);
         });
     }
 
@@ -108,12 +118,14 @@
         postJson({
             "function": "create_comment",
             "content": content
-        }, (response) => {
+        }).then((response) => {
             if (response["status"]) {
                 document.querySelector("#commentModal > div > div > div.modal-header > button").click();
                 fetchComments();
             }
             document.querySelector("#commentModal .alert").style.display = response["status"] ? "none" : "block";
+        }).catch((reason) => {
+            console.log(reason);
         });
     }
 
@@ -123,13 +135,15 @@
     function fetchComments(num, page) {
         postJson({
             "function": "fetch_comments"
-        }, (response) => {
+        }).then((response) => {
             let container = document.getElementById("commentsContainer");
             container.innerHTML = "";
 
             response.forEach((comment) => {
                 container.innerHTML += getCommentCardHtml(comment);
             });
+        }).catch((reason) => {
+            console.log(reason);
         });
     }
 
