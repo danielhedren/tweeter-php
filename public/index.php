@@ -77,6 +77,8 @@ session_start();
                     Log out
                 </button>
             </span>
+
+        <button id="newReplyBtn" type="button" class="d-none" data-toggle="modal" data-target="#replyModal"></button>
     </div>
 </nav>
 
@@ -129,6 +131,32 @@ session_start();
             </div>
             <div class="modal-footer">
                 <button id="registerButton" type="button" class="btn btn-primary">Register</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Reply modal -->
+<div class="modal fade" id="replyModal" tabindex="-1" role="dialog" aria-labelledby="replyModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="replyModalLabel">New reply</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="replyForm" class="form my-2 my-lg-0">
+                    <input type="hidden" name="replyParentId" value="0">
+                    <textarea maxlength="255" class="form-control" id="replyText" rows="10"></textarea>
+                </form>
+                <div class="alert alert-info mt-2" style="display:none" role="alert">
+                    Post failed
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="replyButton" type="button" class="btn btn-primary">Post</button>
             </div>
         </div>
     </div>
