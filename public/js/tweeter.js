@@ -125,7 +125,7 @@
             super();
         }
         connectedCallback() {
-            let template = (document.getElementById("comment-card-template"));
+            let template = document.querySelector("#comment-card-template");
             this.appendChild(template.content.cloneNode(true));
             this.querySelector("[name='displayname']").innerHTML = this.getAttribute("displayname");
             this.querySelector("[name='user_id']").innerHTML = this.getAttribute("user_id");
@@ -133,13 +133,16 @@
             this.querySelector("[name='content']").innerHTML = this.getAttribute("content");
             this.querySelector("[name='votes']").innerHTML = this.getAttribute("votes");
             let id = this.getAttribute("id");
-            this.querySelector("button").onclick = () => {
+            this.querySelector("button.like").onclick = () => {
                 apiRequest({ "function": "create_vote", "comment_id": id })
                     .then((response) => {
                     if (response["status"]) {
                         this.querySelector("[name='votes']").innerHTML = String(Number(this.querySelector("[name='votes']").innerHTML) + 1);
                     }
                 });
+            };
+            this.querySelector("button.reply").onclick = () => {
+                document.querySelector("#newCommentBtn").click();
             };
         }
     });
