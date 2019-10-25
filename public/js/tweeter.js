@@ -142,7 +142,7 @@
                 });
             };
             this.querySelector("button.btn-reply").onclick = () => {
-                document.querySelector("#newCommentBtn").click();
+                document.querySelector("#newReplyBtn").click();
             };
         }
     });
