@@ -182,9 +182,8 @@
                         });
                 };
 
-                this.querySelector<HTMLInputElement>("[name='replyParentId'").value = this.getAttribute("id");
-
                 this.querySelector<HTMLButtonElement>("button.btn-reply").onclick = () => {
+                    this.querySelector<HTMLInputElement>("#replyForm > input[name='replyParentId']").value = this.getAttribute("id");
                     document.querySelector<HTMLButtonElement>("#newReplyBtn").click();
                 };
             }
