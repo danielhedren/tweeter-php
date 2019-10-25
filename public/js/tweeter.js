@@ -142,7 +142,7 @@
                 });
             };
             this.querySelector("button.btn-reply").onclick = () => {
-                this.querySelector("#replyForm > input[name='replyParentId']").value = this.getAttribute("id");
+                document.querySelector("#replyForm > input[name='replyParentId']").value = this.getAttribute("id");
                 document.querySelector("#newReplyBtn").click();
             };
         }
