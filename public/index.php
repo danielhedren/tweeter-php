@@ -37,8 +37,11 @@ session_start();
             <p class="card-text"><slot name="content">content</slot></p>
         </div>
         <div class="card-footer">
-            <button type="button" class="btn btn-primary btn-sm">
+            <button type="button" class="btn btn-primary btn-sm like">
                 Like <span class="badge badge-light"><slot name="votes">0</slot></span>
+            </button>
+            <button type="button" class="btn btn-primary btn-sm btn-reply">
+                Reply
             </button>
         </div>
     </div>

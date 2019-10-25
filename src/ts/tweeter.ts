@@ -173,13 +173,17 @@
                 this.querySelector("[name='votes']").innerHTML = this.getAttribute("votes");
                 let id = this.getAttribute("id");
 
-                this.querySelector("button").onclick = () => {
+                this.querySelector<HTMLButtonElement>("button.like").onclick = () => {
                     apiRequest({"function": "create_vote", "comment_id": id})
                         .then((response) => {
                             if (response["status"]) {
                                 this.querySelector("[name='votes']").innerHTML = String(Number(this.querySelector("[name='votes']").innerHTML) + 1);
                             }
                         });
+                };
+
+                this.querySelector<HTMLButtonElement>("button.reply").onclick = () => {
+                    document.querySelector<any>("#commentModal").modal();
                 };
             }
         });
