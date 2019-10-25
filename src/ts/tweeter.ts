@@ -183,7 +183,7 @@
                 };
 
                 this.querySelector<HTMLButtonElement>("button.reply").onclick = () => {
-                    document.querySelector<any>("#commentModal").modal();
+                    document.querySelector<HTMLButtonElement>("#newCommentBtn").click();
                 };
             }
         });

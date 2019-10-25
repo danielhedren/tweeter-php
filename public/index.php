@@ -70,7 +70,7 @@ session_start();
         <span id="navLoggedIn" <?php if (!isset($_SESSION["userid"])) {
             echo 'style="display:none";';
         } ?>>
-                <button type="button" class="btn btn-primary mr-1" data-toggle="modal" data-target="#commentModal">
+                <button id="newCommentBtn" type="button" class="btn btn-primary mr-1" data-toggle="modal" data-target="#commentModal">
                     New comment
                 </button>
                 <button type="button" class="btn btn-danger mr-1" data-toggle="modal" id="logoutButton">
