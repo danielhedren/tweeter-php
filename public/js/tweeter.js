@@ -16,7 +16,7 @@
                         reject("Malformed JSON response.");
                     }
                 }
-                else if (xmlHttp.readyState === 4 && xmlHttp.status != 200) {
+                else if (xmlHttp.readyState === 4 && xmlHttp.status !== 200) {
                     reject("Server error. " + xmlHttp.status + ": " + xmlHttp.statusText);
                 }
             };
@@ -142,8 +142,21 @@
                 });
             };
             this.querySelector("button.btn-reply").onclick = () => {
-                document.querySelector("#replyForm > input[name='replyParentId']").value = this.getAttribute("id");
+                document.querySelector("#replyForm > input[name='replyParentId']").value = id;
                 document.querySelector("#newReplyBtn").click();
+                let content = document.querySelector("#replyText").value;
+                apiRequest({ "function": "create_comment",
+                    "parent_id": id,
+                    "content": content })
+                    .then((response) => {
+                    if (response["status"]) {
+                        document.querySelector("#replyModal > div > div > div.modal-header > button").click();
+                        fetchComments(10, 0);
+                    }
+                    document.querySelector("#replyModal .alert").style.display = response["status"] ? "none" : "block";
+                }).catch((reason) => {
+                    console.log(reason);
+                });
             };
         }
     });

@@ -156,7 +156,7 @@ session_start();
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="replyButton" type="button" class="btn btn-primary">Post</button>
+                <button id="replyButton" type="button" class="btn btn-primary">Reply</button>
             </div>
         </div>
     </div>
