@@ -185,6 +185,9 @@
                 this.querySelector<HTMLButtonElement>("button.btn-reply").onclick = () => {
                     document.querySelector<HTMLInputElement>("#replyForm > input[name='replyParentId']").value = id;
                     document.querySelector<HTMLButtonElement>("#newReplyBtn").click();
+                };
+
+                this.querySelector<HTMLButtonElement>("#replyButton").onclick = () => {
                     let content = document.querySelector<HTMLInputElement>("#replyText").value;
 
                     apiRequest(
@@ -192,12 +195,12 @@
                             "parent_id": id,
                             "content": content})
                         .then((response) => {
-                        if (response["status"]) {
-                            document.querySelector<HTMLElement>("#replyModal > div > div > div.modal-header > button").click();
-                            fetchComments(10, 0);
-                        }
-                        document.querySelector<HTMLElement>("#replyModal .alert").style.display = response["status"] ? "none" : "block";
-                    }).catch((reason) => {
+                            if (response["status"]) {
+                                document.querySelector<HTMLElement>("#replyModal > div > div > div.modal-header > button").click();
+                                fetchComments(10, 0);
+                            }
+                            document.querySelector<HTMLElement>("#replyModal .alert").style.display = response["status"] ? "none" : "block";
+                        }).catch((reason) => {
                         console.log(reason);
                     });
                 };
