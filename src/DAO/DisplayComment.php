@@ -33,7 +33,7 @@ class DisplayComment
 
     public static function fetch_chronological($num, $page): array
     {
-        $stmt = Database::get_pdo()->prepare("SELECT c.*, u.displayname, (SELECT COUNT(*) FROM VoteTernary v WHERE v.comment_id = c.id) as votes FROM Comment c JOIN User u ON c.user_id = u.id ORDER BY c.date DESC LIMIT :limit OFFSET :offset");
+        $stmt = Database::get_pdo()->prepare("SELECT c.*, u.displayname, (SELECT COUNT(*) FROM VoteTernary v WHERE v.comment_id = c.id) as votes FROM Comment c JOIN User u ON c.user_id = u.id WHERE c.parent_id IS NULL ORDER BY c.date DESC LIMIT :limit OFFSET :offset");
         $stmt->bindParam(":limit", $num, PDO::PARAM_INT);
         $stmt->bindValue(":offset", $page * $num, PDO::PARAM_INT);
         $stmt->execute();
