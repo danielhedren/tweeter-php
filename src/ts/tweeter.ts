@@ -173,7 +173,7 @@
                 this.querySelector("[name='votes']").innerHTML = this.getAttribute("votes");
                 let id = this.getAttribute("id");
 
-                this.querySelector<HTMLButtonElement>("button.like").onclick = () => {
+                this.querySelector<HTMLButtonElement>("button.btn-like").onclick = () => {
                     apiRequest({"function": "create_vote", "comment_id": id})
                         .then((response) => {
                             if (response["status"]) {
@@ -182,7 +182,7 @@
                         });
                 };
 
-                this.querySelector<HTMLButtonElement>("button.reply").onclick = () => {
+                this.querySelector<HTMLButtonElement>("button.btn-reply").onclick = () => {
                     document.querySelector<HTMLButtonElement>("#newCommentBtn").click();
                 };
             }
