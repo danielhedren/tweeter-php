@@ -187,7 +187,7 @@
                     document.querySelector<HTMLButtonElement>("#newReplyBtn").click();
                 };
 
-                this.querySelector<HTMLButtonElement>("#replyButton").onclick = () => {
+                document.querySelector<HTMLButtonElement>("#replyButton").onclick = () => {
                     let content = document.querySelector<HTMLInputElement>("#replyText").value;
 
                     apiRequest(

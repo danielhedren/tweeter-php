@@ -145,7 +145,7 @@
                 document.querySelector("#replyForm > input[name='replyParentId']").value = id;
                 document.querySelector("#newReplyBtn").click();
             };
-            this.querySelector("#replyButton").onclick = () => {
+            document.querySelector("#replyButton").onclick = () => {
                 let content = document.querySelector("#replyText").value;
                 apiRequest({ "function": "create_comment",
                     "parent_id": id,
